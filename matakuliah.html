@@ -180,8 +180,8 @@
                         // Add event listeners to delete buttons
                         document.querySelectorAll(".delete-btn").forEach(button => {
                             button.addEventListener("click", function() {
-                                const matakuliahId = this.getAttribute("data-id");
-                                deleteMatakuliah(matakuliahId);
+                                const id_matakuliah= this.getAttribute("data-id");
+                                deleteMatakuliah(id_matakuliah);
                             });
                         });
                     })
@@ -200,7 +200,7 @@
                     console.error("Terjadi kesalahan saat mengambil data matakuliah:", error);
                 });
 
-                function deleteMatakuliah(matakuliahId) {
+                function deleteMatakuliah(id_matakuliah) {
                     const apiUrl = "https://130.162.195.228/mhs714220026/matakuliah";
 
                     Swal.fire({
@@ -213,7 +213,7 @@
                         confirmButtonText: "Ya, hapus!"
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            fetch(`${apiUrl}/${matakuliahId}`, {
+                            fetch(`${apiUrl}/${id_matakuliah}`, {
                                 method: "DELETE",
                                 headers: {
                                     "Content-Type": "application/json",
@@ -226,7 +226,7 @@
                                 }
                                 Swal.fire("Deleted!", "Matakuliah telah dihapus.", "success");
                                 // hapus baris matakuliah dari tabel
-                                document.querySelector(`button[data-id="${matakuliahId}"]`).closest("tr").remove();
+                                document.querySelector(`button[data-id="${id_matakuliah}"]`).closest("tr").remove();
                             })
                             .catch(error => {
                                 Swal.fire("Error!", "There has been a problem with your fetch operation.", "error");
