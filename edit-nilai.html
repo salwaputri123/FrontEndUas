@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <title>Edit Nilai | Dashboard Akademik</title>
+    <!-- Load FontAwesome kit -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .form_area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #EDDCD9;
+            padding: 30px;
+            border: 2px solid #264143;
+            border-radius: 20px;
+            box-shadow: 3px 4px 0px 1px #E99F4C;
+        }
+
+        .title {
+            color: #264143;
+            font-weight: 900;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .form_group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .sub_title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .form_style {
+            outline: none;
+            border: 2px solid #264143;
+            box-shadow: 3px 4px 0px 1px #E99F4C;
+            width: 290px;
+            padding: 12px 10px;
+            border-radius: 4px;
+            font-size: 15px;
+            margin-top: 5px;
+        }
+
+        .btn {
+            padding: 15px;
+            margin-top: 20px;
+            width: 315px;
+            font-size: 15px;
+            background: #DE5499;
+            border-radius: 10px;
+            font-weight: 800;
+            box-shadow: 3px 3px 0px 0px #E99F4C;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            opacity: .9;
+        }
+
+        .link {
+            font-weight: 800;
+            color: #264143;
+            padding: 5px;
+            text-decoration: none;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        h4 {
+            font-weight: normal;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form_area">
+            <p class="title">Dashboard Akademik <span class="fa-layers fa-fw"><i class="fas fa-music"></i></span></p>
+            <p class="register-title"><strong>Edit Nilai</strong></p>
+            <h4>Edit Informasi Nilai Mahasiswa di Sini!</h4>
+            <form id="nilaiForm">
+                <div class="form_group">
+                    <label class="sub_title" for="id_nilai">Id Nilai</label>
+                    <input type="text" placeholder="Masukan Id Nilai" id="id_nilai" class="form_style" name="id_nilai" required>
+                </div>
+                <div class="form_group">
+                    <label class="sub_title" for="id_mahasiswa">Id Mahasiswa</label>
+                    <input type="text" placeholder="Masukan id Mahasiswa" id="id_mahasiswa" class="form_style" name="id_mahasiswa" required>
+                </div>
+                <div class="form_group">
+                    <label class="sub_title" for="id_matakuliah">Id Matakuliah</label>
+                    <select id="id_matakuliah" class="form_style" name="id_matakuliah" required>
+                        <option value="" disabled selected>Select Matakuliah</option>
+                    </select>
+                </div>
+                <div class="form_group">
+                    <label class="sub_title" for="nilai">Nilai</label>
+                    <input type="text" placeholder="Masukan Nilai" id="nilai" class="form_style" name="nilai" required>
+                </div>
+                <div>
+                    <button type="submit" id="submit-btn" class="btn">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = document.cookie.split("; ").find(row => row.startsWith("token=")).split("=")[1];
+            const urlParams = new URLSearchParams(window.location.search);
+            const id_nilai = urlParams.get('id');
+
+            if (!token) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No token found. Please log in first.'
+                });
+                return;
+            }
+
+            try {
+                // Fetch nilai details
+                const nilaiResponse = await fetch(`https://130.162.195.228/mhs714220026/nilai/${idNilai}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!nilaiResponse.ok) {
+                    throw new Error('Failed to fetch nilai details');
+                }
+
+                const nilaiData = await nilaiResponse.json();
+                document.getElementById('idNilai').value = nilaiData.id_nilai;
+                document.getElementById('idMahasiswa').value = nilaiData.id_mahasiswa;
+                document.getElementById('idMatakuliah').value = nilaiData.id_matakuliah;
+                document.getElementById('nilai').value = nilaiData.nilai;
+                // Fetch matakuliah list
+                const matakuliahResponse = await fetch('https://130.162.195.228/mhs714220026/matakuliah', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!matakuliahResponse.ok) {
+                    throw new Error('Failed to fetch matakuliah');
+                }
+
+                const matakuliahData = await matakuliahResponse.json();
+                const matakuliahSelect = document.getElementById('id_matakuliah');
+
+                // Populate dropdown with matakuliah
+                matakuliahData.forEach(matakuliah => {
+                    const option = document.createElement('option');
+                    option.value = matakuliah.id_matakuliah;
+                    option.textContent = matakuliah.nama_matakuliah;
+                    if (matakuliah.id_matakuliah === nilaiData.id_matakuliah) {
+                        option.selected = true;
+                    }
+                    matakuliahSelect.appendChild(option);
+                });
+
+                // Handle form submission
+                document.getElementById('nilaiForm').addEventListener('submit', async function(event) {
+                    event.preventDefault();
+
+                    const id_nilai = document.getElementById('id_nilai').value;
+                    const id_mahasiswa = parseInt(document.getElementById('id_mahasiswa').value);  // Convert to integer
+                    const id_matakuliah = parseInt(document.getElementById('id_matakuliah').value);  // Convert to integer
+                    const nilai = parseInt(document.getElementById('nilai').value);  // Convert to integer
+
+                    const requestBody = { id_nilai, id_mahasiswa, id_matakuliah, nilai };
+
+                    try {
+                        const response = await fetch(`https://130.162.195.228/mhs714220026/nilai/${id_nilai}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify(requestBody)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to update nilai');
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Update Nilai berhasil!'
+                        }).then(() => {
+                            window.location.href = 'nilai.html';
+                        });
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                        });
+                    }
+                });
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                });
+            }
+        });
+    </script>
+</body>
+</html>

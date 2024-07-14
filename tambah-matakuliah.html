@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <title>Tambah Mata Kuliah | Dashboard Akademik</title>
+    <!-- Load FontAwesome kit -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+       body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #e0f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .title {
+            color: #00796b;
+            font-weight: 700;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .icon {
+            font-size: 2em;
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+
+        .form_group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form_group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #00796b;
+        }
+
+        .form_style {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #00796b;
+            border-radius: 5px;
+            font-size: 1em;
+            color: #00796b;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form_area">
+            <p class="title">Dashboard Akademik <span class="fa-layers fa-fw"><i class="fas fa-university"></i></span></p>
+            <p class="register-title"><strong>Tambah Mata Kuliah</strong></p>
+            <h4>Tambahkan Mata Kuliah Baru di Sini!</h4>
+            <form id="matakuliahForm">
+                <div class="form_group">
+                    <label class="sub_title" for="matakuliahName">Nama MataKuliah</label>
+                    <input type="text" placeholder="Masukkan Nama Mata Kuliah" id="matakuliahName" class="form_style" name="matakuliahName" required>
+                </div>
+                <div>
+                    <button type="submit" id="submit-btn" class="btn">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        document.getElementById('matakuliahForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const matakuliahName = document.getElementById('matakuliahName').value;
+
+            const token = document.cookie.split("; ").find(row => row.startsWith("token=")).split("=")[1];
+
+            if (!token) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No token found. Please log in first.'
+                });
+                return;
+            }
+
+            console.log('Token:', token); // For verification of the token
+
+            fetch('https://130.162.195.228/mhs714220026/matakuliah', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ nama_matakuliah: matakuliahName })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => { throw new Error(data.message || 'Unknown error'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+    Swal.fire({
+        icon: 'success',
+        title: 'Matakuliah Berhasil ditambah',
+        showConfirmButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Kembali ke MataKuliah',
+        imageWidth: 100,
+        imageHeight: 100,
+    }).then(() => {
+        window.location.href = 'matakuliah.html'; // Redirect to the mata kuliah page
+    });
+    document.getElementById('matakuliahForm').reset();
+})
+.catch(error => {
+    console.error('Error:', error);
+    Swal.fire({
+        icon: 'error',
+        title: 'Matakuliah gagal ditambah',
+        showConfirmButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Try Again',
+        imageWidth: 100,
+        imageHeight: 100,
+    });
+});
+
+        });
+    </script>
+</body>
+</html>
