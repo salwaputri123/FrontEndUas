@@ -122,29 +122,33 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'No token found. Please log in first.'
+                    text: 'Token tidak ditemukan. Silakan login terlebih dahulu.'
                 });
                 return;
             }
 
             try {
-                // Fetch nilai details
-                const nilaiResponse = await fetch(`https://130.162.195.228/mhs714220026/nilai/${idNilai}`, {
+                // Ambil detail nilai
+                const nilaiResponse = await fetch(`https://130.162.195.228/mhs714220026/nilai/${id_nilai}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
 
                 if (!nilaiResponse.ok) {
-                    throw new Error('Failed to fetch nilai details');
+                    throw new Error('Gagal mengambil detail nilai');
                 }
 
                 const nilaiData = await nilaiResponse.json();
-                document.getElementById('idNilai').value = nilaiData.id_nilai;
-                document.getElementById('idMahasiswa').value = nilaiData.id_mahasiswa;
-                document.getElementById('idMatakuliah').value = nilaiData.id_matakuliah;
-                document.getElementById('nilai').value = nilaiData.nilai;
-                // Fetch matakuliah list
+                const id_nilai_field = document.getElementById('id_nilai');
+                const id_mahasiswa_field = document.getElementById('id_mahasiswa');
+                const id_matakuliah_field = document.getElementById('id_matakuliah');
+                const nilai_field = document.getElementById('nilai');
+
+                id_nilai_field.value = nilaiData.id_nilai;
+                id_mahasiswa_field.value = nilaiData.id_mahasiswa;
+
+                // Ambil daftar matakuliah
                 const matakuliahResponse = await fetch('https://130.162.195.228/mhs714220026/matakuliah', {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -152,13 +156,13 @@
                 });
 
                 if (!matakuliahResponse.ok) {
-                    throw new Error('Failed to fetch matakuliah');
+                    throw new Error('Gagal mengambil daftar matakuliah');
                 }
 
                 const matakuliahData = await matakuliahResponse.json();
                 const matakuliahSelect = document.getElementById('id_matakuliah');
 
-                // Populate dropdown with matakuliah
+                // Populate dropdown dengan matakuliah
                 matakuliahData.forEach(matakuliah => {
                     const option = document.createElement('option');
                     option.value = matakuliah.id_matakuliah;
@@ -169,14 +173,14 @@
                     matakuliahSelect.appendChild(option);
                 });
 
-                // Handle form submission
+                // Handle submission form
                 document.getElementById('nilaiForm').addEventListener('submit', async function(event) {
                     event.preventDefault();
 
                     const id_nilai = document.getElementById('id_nilai').value;
-                    const id_mahasiswa = parseInt(document.getElementById('id_mahasiswa').value);  // Convert to integer
-                    const id_matakuliah = parseInt(document.getElementById('id_matakuliah').value);  // Convert to integer
-                    const nilai = parseInt(document.getElementById('nilai').value);  // Convert to integer
+                    const id_mahasiswa = parseInt(document.getElementById('id_mahasiswa').value);
+                    const id_matakuliah = parseInt(document.getElementById('id_matakuliah').value);
+                    const nilai = parseInt(document.getElementById('nilai').value);
 
                     const requestBody = { id_nilai, id_mahasiswa, id_matakuliah, nilai };
 
@@ -191,12 +195,12 @@
                         });
 
                         if (!response.ok) {
-                            throw new Error('Failed to update nilai');
+                            throw new Error('Gagal memperbarui nilai');
                         }
 
                         Swal.fire({
                             icon: 'success',
-                            title: 'Success',
+                            title: 'Berhasil',
                             text: 'Update Nilai berhasil!'
                         }).then(() => {
                             window.location.href = 'nilai.html';
@@ -205,6 +209,7 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
+                            text: 'Gagal memperbarui nilai'
                         });
                     }
                 });
@@ -212,6 +217,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
+                    text: 'Terjadi kesalahan'
                 });
             }
         });

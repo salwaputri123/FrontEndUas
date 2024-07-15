@@ -155,39 +155,32 @@
         <script src="js/demo/chart-area-demo.js"></script>
         <script src="js/demo/chart-pie-demo.js"></script>
 
-        <!-- Custom script for this page -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             document.addEventListener("DOMContentLoaded", () => {
-                const apiUrl = "https://130.162.195.228/mhs714220026/matakuliah"; // Sesuaikan dengan endpoint API untuk data mata kuliah dari basis data Anda
-                fetch(apiUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        const tableBody = document.getElementById("matakuliahTableBody");
+                const apiUrl = "https://130.162.195.228/mhs714220026/matakuliah";
+                const token = document.cookie.split("; ").find(row => row.startsWith("token=")).split("=")[1];
 
-                        data.forEach(matakuliah => {
-                            const row = tableBody.insertRow();
-                            row.innerHTML = `
-                                <td>${matakuliah.id_matakuliah}</td>
-                                <td>${matakuliah.nama_matakuliah}</td>
-                                <td>
-                                    <button class="btn btn-warning" onclick="window.location.href='edit-matakuliah.html?id=${matakuliah.id_matakuliah}'">Edit</button> |
-                                    <button class="btn btn-danger delete-btn" data-id="${matakuliah.id_matakuliah}">Delete</button>
-                                </td>
-                            `;
-                        });
+                fetch(apiUrl, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("matakuliahTableBody");
 
-                        // Add event listeners to delete buttons
-                        document.querySelectorAll(".delete-btn").forEach(button => {
-                            button.addEventListener("click", function() {
-                                const id_matakuliah= this.getAttribute("data-id");
-                                deleteMatakuliah(id_matakuliah);
-                            });
-                        });
-                    })
-                    .catch(error => {
-                        console.error("Terjadi kesalahan saat mengambil data mata kuliah:", error);
+                    data.forEach(matakuliah => {
+                        const row = tableBody.insertRow();
+                        row.innerHTML = `
+                            <td>${matakuliah.id_matakuliah}</td>
+                            <td>${matakuliah.nama_matakuliah}</td>
+                            <td>
+                                <button class="btn btn-warning" onclick="window.location.href='edit-matakuliah.html?id=${matakuliah.id_matakuliah}'">Edit</button> |
+                                <button class="btn btn-danger delete-btn" data-id="${matakuliah.id_matakuliah}">Delete</button>
+                            </td>
+                        `;
                     });
+
                     // Add event listeners to delete buttons
                     document.querySelectorAll(".delete-btn").forEach(button => {
                         button.addEventListener("click", function() {
@@ -198,11 +191,10 @@
                 })
                 .catch(error => {
                     console.error("Terjadi kesalahan saat mengambil data matakuliah:", error);
+                    Swal.fire("Error!", "Terjadi kesalahan saat mengambil data matakuliah.", "error");
                 });
 
                 function deleteMatakuliah(id_matakuliah) {
-                    const apiUrl = "https://130.162.195.228/mhs714220026/matakuliah";
-
                     Swal.fire({
                         title: "Apakah Anda yakin?",
                         text: "Anda tidak dapat mengembalikan ini!",
@@ -216,25 +208,26 @@
                             fetch(`${apiUrl}/${id_matakuliah}`, {
                                 method: "DELETE",
                                 headers: {
-                                    "Content-Type": "application/json",
                                     "Authorization": `Bearer ${token}`
                                 }
                             })
                             .then(response => {
-                                if (!response.ok) {
-                                    throw new Error("Network response was not ok");
+                                if (response.ok) {
+                                    Swal.fire("Dihapus!", "Matakuliah berhasil dihapus.", "success").then(() => {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire("Error!", "Terjadi kesalahan saat menghapus matakuliah.", "error");
                                 }
-                                Swal.fire("Deleted!", "Matakuliah telah dihapus.", "success");
-                                // hapus baris matakuliah dari tabel
-                                document.querySelector(`button[data-id="${id_matakuliah}"]`).closest("tr").remove();
                             })
                             .catch(error => {
-                                Swal.fire("Error!", "There has been a problem with your fetch operation.", "error");
-                                console.error("There has been a problem with your fetch operation:", error);
+                                console.error("Terjadi kesalahan saat menghapus matakuliah:", error);
+                                Swal.fire("Error!", "Terjadi kesalahan saat menghapus matakuliah.", "error");
                             });
                         }
                     });
                 }
+            });
         </script>
     </body>
 </html>

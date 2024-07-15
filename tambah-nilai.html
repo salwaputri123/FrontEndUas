@@ -88,11 +88,11 @@
             <h4>Tambah Nilai Mahasiswa di Sini!</h4>
             <form id="nilaiForm">
                 <div class="form_group">
-                    <label class="sub_title" for="title">Id Mahasiswa</label>
+                    <label class="sub_title" for="id_mahasiswa">Id Mahasiswa</label>
                     <input type="text" placeholder="Masukan Id Mahasiswa" id="id_mahasiswa" class="form_style" name="id_mahasiswa" required>
                 </div>
                 <div class="form_group">
-                    <label class="sub_title" for="title">Id Matakuliah</label>
+                    <label class="sub_title" for="id_matakuliah">Id Matakuliah</label>
                     <select id="id_matakuliah" class="form_style" name="id_matakuliah" required>
                         <option value="">Pilih Matakuliah</option>
                     </select>
@@ -148,7 +148,7 @@
                 document.getElementById('nilaiForm').addEventListener('submit', async function(event) {
                     event.preventDefault();
 
-                    const id_mahasiswa = document.getElementById('id_mahasiswa').value;
+                    const id_mahasiswa = parseInt(document.getElementById('id_mahasiswa').value); // Convert to integer
                     const id_matakuliah = parseInt(document.getElementById('id_matakuliah').value);  // Convert to integer
                     const nilai = parseInt(document.getElementById('nilai').value);  // Convert to integer
 
