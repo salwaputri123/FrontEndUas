@@ -78,8 +78,6 @@
         .btn:hover {
             background-color: #004d40;
         }
-
-        /* Remove the registration link styles */
     </style>
 </head>
 <body>
@@ -140,36 +138,36 @@
                 }
 
                 if (data.token) {
-    // Set token in cookie
-    document.cookie = `token=${data.token}; path=/;`;
+                    // Set token in cookie
+                    document.cookie = `token=${data.token}; path=/;`;
 
-    Swal.fire({
-        icon: 'success',
-        title: 'Login Berhasil',
-        showConfirmButton: true,
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Go to Dashboard',
-        imageWidth: 100,
-        imageHeight: 100,
-    }).then(() => {
-        // Redirect to another page after login
-        window.location.href = './dashboard.html'; // Ubah ke halaman yang diinginkan
-    });
-} else {
-    throw new Error('No token received');
-}
-} catch (error) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Login Failed',
-        showConfirmButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Try Again',
-        imageWidth: 100,
-        imageHeight: 100,
-    });
-}
-
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Berhasil',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Go to Dashboard',
+                        imageWidth: 100,
+                        imageHeight: 100,
+                    }).then(() => {
+                        // Redirect to another page after login
+                        window.location.href = './dashboard.html'; // Ubah ke halaman yang diinginkan
+                    });
+                } else {
+                    throw new Error('No token received');
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Gagal',
+                    text: 'Silakan coba lagi',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Coba Lagi',
+                    imageWidth: 100,
+                    imageHeight: 100,
+                });
+            }
         });
     </script>
 </body>
